@@ -2,7 +2,7 @@ using System.Net.Sockets;
 using Network.Packets;
 using UnityEngine;
 
-public class NetworkManager
+public static class NetworkManager
 {
     public static bool ConnectedToServer => _tcpClient != null && _tcpClient.Connected;
 

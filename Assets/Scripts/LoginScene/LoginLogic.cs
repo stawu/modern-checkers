@@ -9,6 +9,7 @@ namespace LoginScene
     {
         public UnityEvent onSuccessfulLoginResponse;
         public UnityEvent<string> onNegativeLoginResponse;
+        public UnityEvent onPlayerDataReceived;
         
         private string _accountName;
         private string _accountPassword;
@@ -36,7 +37,18 @@ namespace LoginScene
 
             Debug.Log("Login response: " + loginResponsePacket.Status);
             if (loginResponsePacket.Status == LoginResponseInPacket.LoginStatus.Successful)
+            {
                 onSuccessfulLoginResponse.Invoke();
+
+                var skinOffersPacket = new SkinOffersInPacket();
+                NetworkManager.FillPacket(skinOffersPacket);
+                SkinsManager.UpdateOffersFromSkinOffersPacket(skinOffersPacket);
+                
+                var playerDataPacket = new PlayerDataInPacket();
+                NetworkManager.FillPacket(playerDataPacket);
+                PlayerDataManager.UpdateDataFromPlayerDataPacket(playerDataPacket);
+                onPlayerDataReceived.Invoke();
+            }
             else if(loginResponsePacket.Status == LoginResponseInPacket.LoginStatus.Negative)
                 onNegativeLoginResponse.Invoke(loginResponsePacket.ResponseText);
             else

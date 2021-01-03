@@ -10,11 +10,6 @@ public class ServerConnector : MonoBehaviour
     
     private float _lastConnectionAttemptTimestamp = 0;
 
-    void Start()
-    {
-        
-    }
-
     private void Update()
     {
         if (NetworkManager.ConnectedToServer) 
