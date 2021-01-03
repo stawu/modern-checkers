@@ -1,11 +1,15 @@
 using Network.Packets.In;
 using Network.Packets.Out;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace LoginScene
 {
     public class LoginLogic : MonoBehaviour
     {
+        public UnityEvent onSuccessfulLoginResponse;
+        public UnityEvent<string> onNegativeLoginResponse;
+        
         private string _accountName;
         private string _accountPassword;
 
@@ -21,13 +25,22 @@ namespace LoginScene
     
         public void TryToLogin()
         {
+            if(!NetworkManager.ConnectedToServer)
+                return;
+            
             string hashedPassword = _accountPassword;//todo hash
             NetworkManager.SendPacket(new LoginRequestOutPacket(_accountName, hashedPassword));
 
             var loginResponsePacket = new LoginResponseInPacket();
             NetworkManager.FillPacket(loginResponsePacket);
-            
-            Debug.Log("Login response: " + loginResponsePacket.testVal);
+
+            Debug.Log("Login response: " + loginResponsePacket.Status);
+            if (loginResponsePacket.Status == LoginResponseInPacket.LoginStatus.Successful)
+                onSuccessfulLoginResponse.Invoke();
+            else if(loginResponsePacket.Status == LoginResponseInPacket.LoginStatus.Negative)
+                onNegativeLoginResponse.Invoke(loginResponsePacket.ResponseText);
+            else
+                onNegativeLoginResponse.Invoke("Corrupted network packet");
         }
     }
 }
