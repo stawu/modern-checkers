@@ -7,6 +7,7 @@ namespace Network.Packets.In
         public string AccountName;
         public int Coins;
         public int[] OwnedSkinIds;
+        public int[] SelectedSkinsIdsForPawns;
 
         public override void FillDataFromStream(NetworkStream networkStream)
         {
@@ -16,6 +17,10 @@ namespace Network.Packets.In
             OwnedSkinIds = new int[ReadInt(networkStream)];
             for (var i = 0; i < OwnedSkinIds.Length; i++)
                 OwnedSkinIds[i] = ReadInt(networkStream);
+
+            SelectedSkinsIdsForPawns = new int[12];
+            for (var i = 0; i < SelectedSkinsIdsForPawns.Length; i++)
+                SelectedSkinsIdsForPawns[i] = ReadInt(networkStream);
         }
     }
 }
