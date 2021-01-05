@@ -1,7 +1,9 @@
+using System.Collections;
 using Network.Packets.In;
 using Network.Packets.Out;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 namespace LoginScene
 {
@@ -9,8 +11,7 @@ namespace LoginScene
     {
         public UnityEvent onSuccessfulLoginResponse;
         public UnityEvent<string> onNegativeLoginResponse;
-        public UnityEvent onPlayerDataReceived;
-        
+
         private string _accountName;
         private string _accountPassword;
 
@@ -47,12 +48,23 @@ namespace LoginScene
                 var playerDataPacket = new PlayerDataInPacket();
                 NetworkManager.FillPacket(playerDataPacket);
                 PlayerDataManager.UpdateDataFromPlayerDataPacket(playerDataPacket);
-                onPlayerDataReceived.Invoke();
+
+                StartCoroutine(PlayLoggedInSequence());
             }
             else if(loginResponsePacket.Status == LoginResponseInPacket.LoginStatus.Negative)
                 onNegativeLoginResponse.Invoke(loginResponsePacket.ResponseText);
             else
                 onNegativeLoginResponse.Invoke("Corrupted network packet");
+        }
+
+        private IEnumerator PlayLoggedInSequence()
+        {
+            //todo hardcoded code
+            yield return new WaitForSeconds(3);
+            GameObject.FindObjectOfType<Canvas>().gameObject.SetActive(false);
+            Camera.main.transform.GetComponent<Animator>().enabled = true;
+            yield return new WaitForSeconds(1);
+            SceneManager.LoadScene("LoggedIn", LoadSceneMode.Single);
         }
     }
 }
