@@ -1,4 +1,5 @@
 using System.Net.Sockets;
+using Cysharp.Threading.Tasks;
 using Network.Packets;
 using UnityEngine;
 
@@ -45,5 +46,10 @@ public static class NetworkManager
     public static void FillPacket(InPacket packet)
     {
         packet.FillDataFromStream(_networkStream);
+    }
+    
+    public static UniTask FillPacketAsync(InPacket packet)
+    {
+        return UniTask.Run( () => packet.FillDataFromStream(_networkStream));
     }
 }

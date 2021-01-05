@@ -1,13 +1,9 @@
-using System;
 using System.Linq;
-using JetBrains.Annotations;
-using LoggedInScene.Shop;
+using Skins;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace LoggedInScene
+namespace LoggedInScene.Shop
 {
     public class ShopSkinPanelsGenerator : MonoBehaviour
     {
@@ -15,35 +11,61 @@ namespace LoggedInScene
         [SerializeField] private RectTransform parentToSkinPanels;
         [SerializeField] private BuyLogic buyLogicInstance;
         [SerializeField] private SelectingSkinsForPawnsPanelGenerator selectingSkinsForPawnsPanelGeneratorInstance;
+        
+        private Image[] _skinPanelImages;
+        private Text[] _skinPanelNameTexts;
+        private Text[] _skinPanelPriceTexts;
+        private Button[] _skinPanelUnlockButtons; 
+        private Button[] _skinPanelSelectButtons;
 
+        public void UpdateContentOfSkinsPanels()
+        {
+            var numberOfSkins =  SkinsManager.Skins.Length;
+
+            for (var i = 0; i < numberOfSkins; i++)
+            {
+                var skin = SkinsManager.Skins[i];
+                _skinPanelImages[i].sprite = skin.image;
+                _skinPanelNameTexts[i].text = skin.skinName;
+                
+                _skinPanelUnlockButtons[i].onClick.RemoveAllListeners();
+                _skinPanelUnlockButtons[i].onClick.AddListener(() => buyLogicInstance.TryToBuySkin(skin.id));
+                
+                _skinPanelSelectButtons[i].onClick.RemoveAllListeners();
+                _skinPanelSelectButtons[i].onClick.AddListener(() => selectingSkinsForPawnsPanelGeneratorInstance.ShowSelectionPanelAndUpdateContent(skin.id));
+
+                bool skinOwned = PlayerDataManager.OwnedSkinIds.Contains(skin.id);
+                
+                _skinPanelPriceTexts[i].text = skinOwned ? "Owned" : SkinsManager.GetOfferById(skin.id).Price.ToString();
+                _skinPanelUnlockButtons[i].gameObject.SetActive(!skinOwned);
+                _skinPanelSelectButtons[i].gameObject.SetActive(skinOwned);
+            }
+        }
+        
         private void Awake()
         {
             SkinsManager.LoadAllSkins();
             GenerateSkinPanelsGameObjects();
+            UpdateContentOfSkinsPanels();
         }
 
         private void GenerateSkinPanelsGameObjects()
         {
-            foreach (var skin in SkinsManager.Skins)
+            var numberOfSkins =  SkinsManager.Skins.Length;
+            _skinPanelImages = new Image[numberOfSkins];
+            _skinPanelNameTexts = new Text[numberOfSkins];
+            _skinPanelPriceTexts = new Text[numberOfSkins];
+            _skinPanelUnlockButtons = new Button[numberOfSkins];
+            _skinPanelSelectButtons = new Button[numberOfSkins];
+            
+            for (var i=0; i<numberOfSkins; i++)
             {
                 var instantiatedSkinPanelGameObject = Instantiate(skinPanelPrefab, parentToSkinPanels);
-                var panelImage = instantiatedSkinPanelGameObject.transform.Find("Image").GetComponent<Image>();
-                var panelNameText = instantiatedSkinPanelGameObject.transform.Find("NameText").GetComponent<Text>();
-                var panelPriceText = instantiatedSkinPanelGameObject.transform.Find("PriceText").GetComponent<Text>();
-                var unlockButton = instantiatedSkinPanelGameObject.transform.Find("UnlockButton").GetComponent<Button>();
-                var selectButton = instantiatedSkinPanelGameObject.transform.Find("SelectButton").GetComponent<Button>();
-
-                panelImage.sprite = skin.image;
-                panelNameText.text = skin.skinName;
-                
-                unlockButton.onClick.AddListener(() => buyLogicInstance.TryToBuySkin(skin.id));
-                selectButton.onClick.AddListener(() => selectingSkinsForPawnsPanelGeneratorInstance.ShowSelectionPanel(skin.id));
-
-                bool skinOwned = PlayerDataManager.OwnedSkinIds.Contains(skin.id);
-                
-                panelPriceText.text = skinOwned ? "Owned" : SkinsManager.GetOfferById(skin.id).Price.ToString();
-                unlockButton.gameObject.SetActive(!skinOwned);
-                selectButton.gameObject.SetActive(skinOwned);
+                _skinPanelImages[i] = instantiatedSkinPanelGameObject.transform.Find("Image").GetComponent<Image>();
+                _skinPanelNameTexts[i] = instantiatedSkinPanelGameObject.transform.Find("NameText").GetComponent<Text>();
+                _skinPanelPriceTexts[i] = instantiatedSkinPanelGameObject.transform.Find("PriceText").GetComponent<Text>();
+                _skinPanelUnlockButtons[i] = instantiatedSkinPanelGameObject.transform.Find("UnlockButton").GetComponent<Button>();
+                _skinPanelSelectButtons[i] = instantiatedSkinPanelGameObject.transform.Find("SelectButton").GetComponent<Button>();
             }
         }
     }
