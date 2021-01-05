@@ -13,7 +13,7 @@ namespace LoggedInScene.Shop
         private Text[] _skinNames;
         private Button[] _skinSelectButtons;
         
-        public void ShowSelectionPanel(int newSkinId)
+        public void ShowSelectionPanelAndUpdateContent(int newSkinId)
         {
             for (var i = 0; i < PlayerDataManager.SelectedSkinsIdsForPawns.Length; i++)
             {
@@ -35,6 +35,11 @@ namespace LoggedInScene.Shop
         }
 
         private void Awake()
+        {
+            GenerateSelectionPanelGameObjects();
+        }
+
+        private void GenerateSelectionPanelGameObjects()
         {
             _skinImages = new Image[PlayerDataManager.SelectedSkinsIdsForPawns.Length];
             _skinNames = new Text[PlayerDataManager.SelectedSkinsIdsForPawns.Length];
