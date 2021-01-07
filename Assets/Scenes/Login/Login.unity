@@ -2496,6 +2496,7 @@ GameObject:
   - component: {fileID: 748893862}
   - component: {fileID: 748893864}
   - component: {fileID: 748893863}
+  - component: {fileID: 748893865}
   m_Layer: 5
   m_Name: TextPro
   m_TagString: Untagged
@@ -2542,7 +2543,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Connecting to server...
+  m_text: Connecting to server
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2619,6 +2620,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 748893861}
   m_CullTransparentMesh: 1
+--- !u!114 &748893865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 748893861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1d99d724f4a2794f94f0861c3d38e3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &758466013 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 495392, guid: a85feef60c5e675428276a080c95062c, type: 3}
@@ -3219,6 +3232,7 @@ GameObject:
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
   - component: {fileID: 963194230}
+  - component: {fileID: 963194231}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3372,6 +3386,21 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &963194231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1df039713545e98469baf132a8d8aaf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minMaxRotX: {x: -1, y: 1}
+  minMaxRotZ: {x: -1, y: 1}
+  t: 1
 --- !u!1001 &975348968
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9572,6 +9601,7 @@ GameObject:
   - component: {fileID: 1545038841}
   - component: {fileID: 1545038843}
   - component: {fileID: 1545038842}
+  - component: {fileID: 1545038844}
   m_Layer: 5
   m_Name: TextPro
   m_TagString: Untagged
@@ -9620,7 +9650,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Success...
 
-    Downloading account informations...'
+    Downloading account informations'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -9697,6 +9727,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1545038840}
   m_CullTransparentMesh: 1
+--- !u!114 &1545038844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1545038840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1d99d724f4a2794f94f0861c3d38e3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1545164916
 PrefabInstance:
   m_ObjectHideFlags: 0
