@@ -10,5 +10,6 @@ namespace Skins
         public int id;
         public string skinName;
         public Sprite image;
+        public GameObject pawnPrefab;
     }
 }

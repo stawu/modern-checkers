@@ -3687,7 +3687,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b6537b8253ac1b44be09c7af0a46bf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverIP: 127.0.0.1
+  serverIP: 83.5.139.55
   serverPort: 5867
   timeBetweenConnectionAttemptInSeconds: 3
   onConnectedToServer:

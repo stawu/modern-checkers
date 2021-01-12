@@ -15,3 +15,4 @@ MonoBehaviour:
   id: 1
   skinName: Moggie
   image: {fileID: 21300000, guid: 5a7b0345718326849946887e143db5a2, type: 3}
+  pawnPrefab: {fileID: 8751208231980715115, guid: e74bab1e50cd09741a364a117e48fd3e, type: 3}

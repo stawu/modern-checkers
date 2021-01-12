@@ -13,7 +13,7 @@ public class CameraSmoothMouseFollower : MonoBehaviour
 
     private void Start()
     {
-        startEulerRot = transform.rotation.eulerAngles;
+        startEulerRot = transform.localRotation.eulerAngles;
     }
 
     private void Update()
@@ -24,6 +24,6 @@ public class CameraSmoothMouseFollower : MonoBehaviour
         var yy = Mathf.Lerp(startEulerRot.y + minMaxRotX.x, startEulerRot.y + minMaxRotX.y, xMousePercent);
         var xx = Mathf.Lerp(startEulerRot.x + minMaxRotZ.x, startEulerRot.x + minMaxRotZ.y, 1 - yMousePercent);
 
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(xx, yy, startEulerRot.z), Time.deltaTime * t);
+        transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(xx, yy, startEulerRot.z), Time.deltaTime * t);
     }
 }

@@ -15,3 +15,4 @@ MonoBehaviour:
   id: 2
   skinName: Feline
   image: {fileID: 0}
+  pawnPrefab: {fileID: 8751208231980715115, guid: e74bab1e50cd09741a364a117e48fd3e, type: 3}
