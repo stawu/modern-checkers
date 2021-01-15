@@ -48,19 +48,22 @@ namespace Match
         private void OnMouseEnterTile(Tile tile)
         {
             var move = _selectedPawnMoves.FirstOrDefault(move => move.Tile == tile);
-            if (!move.Equals(default(PawnMove)))
+            if (move != null)
             {
-                tile.SetTileColor(Color.magenta);
-                
-                TrailRenderer.enabled = true;
-                TrailRenderer.Clear();
-                // TrailRenderer.AddPosition(move.Tile.Transform.position + new Vector3(0, 0.2f));
-                // for (int i = move.PreviousMoveIndex; i > 0; i--)
-                
-                TrailRenderer.AddPosition(move.PawnTile.Transform.position + new Vector3(0, 0.2f));
-                foreach (var pawnMove in GetOrderedPawnMovesToPawnMove(move))
-                    TrailRenderer.AddPosition(pawnMove.Tile.Transform.position + new Vector3(0, 0.2f));
-                TrailRenderer.transform.position = move.Tile.Transform.position + new Vector3(0, 0.2f);
+                if (!move.Forbidden)
+                {
+                    tile.SetTileColor(Color.magenta);
+
+                    TrailRenderer.enabled = true;
+                    TrailRenderer.Clear();
+                    // TrailRenderer.AddPosition(move.Tile.Transform.position + new Vector3(0, 0.2f));
+                    // for (int i = move.PreviousMoveIndex; i > 0; i--)
+
+                    TrailRenderer.AddPosition(move.PawnTile.Transform.position + new Vector3(0, 0.2f));
+                    foreach (var pawnMove in GetOrderedPawnMovesToPawnMove(move))
+                        TrailRenderer.AddPosition(pawnMove.Tile.Transform.position + new Vector3(0, 0.2f));
+                    TrailRenderer.transform.position = move.Tile.Transform.position + new Vector3(0, 0.2f);
+                }
             }
             else
                 tile.SetTileColor(tileColorMouseOver);
@@ -80,12 +83,22 @@ namespace Match
                     
                     _selectedPawn = pawnOnTile;
                     _selectedPawnMoves = CalculatePossiblePawnMoves(_selectedPawn, tile);
+                    bool pawnHavePossibleAttack = _selectedPawnMoves.Any(move => move.MoveType == MoveType.Attack);
+
                     foreach (var move in _selectedPawnMoves)
-                        move.Tile.SetTileColor(Color.red);
+                    {
+                        if (pawnHavePossibleAttack && move.MoveType == MoveType.Move)
+                        {
+                            move.Tile.SetTileColor(Color.black);
+                            move.Forbidden = true;
+                        }
+                        else
+                            move.Tile.SetTileColor(Color.red);
+                    }
                 }
 
                 var moveee = _selectedPawnMoves.FirstOrDefault(move => move.Tile == tile);
-                if (!moveee.Equals(default(PawnMove)))
+                if (moveee != null && !moveee.Forbidden)
                 {
                     var orderedPawnMoves = GetOrderedPawnMovesToPawnMove(moveee);
                     _selectedPawn.ExecuteMoves(orderedPawnMoves);
@@ -105,10 +118,11 @@ namespace Match
         
         private void OnMouseExitTile(Tile tile)
         {
-            if (_selectedPawnMoves.Any(move => move.Tile == tile))
+            PawnMove move = _selectedPawnMoves.FirstOrDefault(move => move.Tile == tile);
+            if (move != null)
             {
                 TrailRenderer.enabled = false;
-                tile.SetTileColor(Color.red);
+                tile.SetTileColor(move.Forbidden ? Color.black : Color.red);
             }
             else
                 tile.ResetTileColor();
@@ -140,7 +154,7 @@ namespace Match
                             break;
                         else
                         {
-                            CalculatePossibleAttackMovesAndAddThemTo(moves, _selectedPawn.transform.position + directionSum + direction, tile, pawnTile);
+                            CalculatePossibleAttackMovesAndAddThemTo(moves, _selectedPawn.transform.position + directionSum + direction, tile, pawnTile, -1);
                             break;
                         }
                     }
@@ -162,16 +176,16 @@ namespace Match
             return moves.ToArray();
         }
 
-        private void CalculatePossibleAttackMovesAndAddThemTo(List<PawnMove> moves, Vector3 startPos, Tile enemyTile, Tile pawnTile)
+        private void CalculatePossibleAttackMovesAndAddThemTo(List<PawnMove> moves, Vector3 startPos, Tile enemyTile, Tile pawnTile, int previousMoveIndex)
         {
-            if (!boardControllerInstance.TryGetTile(startPos, out var startTile) || startTile.TryGetPawn(out _) != false) 
+            if (!boardControllerInstance.TryGetTile(startPos, out var startTile) || startTile.TryGetPawn(out _)) 
                 return;
             
             if(moves.Any(pawnMove => pawnMove.Tile == startTile))
                 return;
 
             var move = new PawnMove(startTile, MoveType.Attack);
-            move.PreviousMoveIndex = moves.Count == 0 ? 0 : moves.Count - 1;
+            move.PreviousMoveIndex = previousMoveIndex;//moves.Count == 0 ? 0 : moves.Count - 1;
             move.PawnTile = pawnTile;
             move.EnemyTile = enemyTile;
             moves.Add(move);
@@ -189,7 +203,7 @@ namespace Match
                 if (boardControllerInstance.TryGetTile(startPos + direction, out var tile))
                 {
                     if (tile.TryGetPawn(out var pawnAtTargetTile) && pawnAtTargetTile.playerPawn == false)
-                        CalculatePossibleAttackMovesAndAddThemTo(moves, startPos + direction + direction, tile, pawnTile);
+                        CalculatePossibleAttackMovesAndAddThemTo(moves, startPos + direction + direction, tile, pawnTile, moves.Count -1);
                 }
             }
         }
@@ -199,7 +213,7 @@ namespace Match
             var moves = new List<PawnMove>();
             
             moves.Add(targetPawnMove);
-            for (var i = targetPawnMove.PreviousMoveIndex; i != 0; i--)
+            for (var i = targetPawnMove.PreviousMoveIndex; i != -1; i = _selectedPawnMoves[i].PreviousMoveIndex)
                 moves.Add(_selectedPawnMoves[i]);
 
             moves.Reverse();
@@ -213,7 +227,7 @@ namespace Match
         Attack
     }
     
-    public struct PawnMove
+    public class PawnMove
     {
         public Tile Tile;
         public MoveType MoveType;
@@ -221,6 +235,7 @@ namespace Match
         public int PreviousMoveIndex;
         public Tile PreviousTile;
         public Tile PawnTile;
+        public bool Forbidden;
 
         public PawnMove(Tile tile, MoveType moveType)
         {
@@ -228,9 +243,10 @@ namespace Match
             MoveType = moveType;
             EnemyTile = null;
             //PawnPosition = Vector3.zero;
-            PreviousMoveIndex = 0;
+            PreviousMoveIndex = -1;
             PreviousTile = null;
             PawnTile = null;
+            Forbidden = false;
         }
     }
 }
