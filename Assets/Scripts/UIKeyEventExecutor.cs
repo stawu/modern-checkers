@@ -7,14 +7,15 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class InputFieldKeyEventExecutor : MonoBehaviour
+public class UIKeyEventExecutor : MonoBehaviour
 {
+    public bool requireElementToBeSelected = true;
     public KeyCode keyCode;
     public UnityEvent onKeyDown;
     
     private void Update()
     {
-        if(EventSystem.current.currentSelectedGameObject != this.gameObject)
+        if(requireElementToBeSelected && EventSystem.current.currentSelectedGameObject != this.gameObject)
             return;
 
         if(Input.GetKeyDown(keyCode))
