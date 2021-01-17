@@ -19,6 +19,11 @@ namespace LoggedInScene
             NetworkManager.SendPacket(new PlayCompetitiveRequestOutCommand());
         }
 
+        public void CancelSearchCompetitiveMatch()
+        {
+            NetworkManager.SendPacket(new CancelCompetitiveRequestOutCommand());
+        }
+
         public void MarkMatchAsFounded(int matchId)
         {
             _lastFoundedMatchId = matchId;
