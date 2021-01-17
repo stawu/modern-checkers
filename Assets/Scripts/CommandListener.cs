@@ -4,6 +4,7 @@ using LoggedInScene.Shop;
 using Match;
 using Network.Packets.In;
 using Network.Packets.In.Commands;
+using Network.Packets.Out.Commands;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
@@ -13,6 +14,7 @@ namespace LoggedInScene
     public class CommandListener : MonoBehaviour
     {
         private static CommandListener _singletonInstance = null;
+        private bool _listening = true;
         
         //LoggedIn Scene
         private ShopSkinPanelsGenerator _shopSkinPanelsGeneratorInstance;
@@ -22,11 +24,17 @@ namespace LoggedInScene
         private MatchLogic _matchLogicInstance;
         private BoardController _boardControllerInstance;
 
+        public void StopListening()
+        {
+            _listening = false;
+        }
+
         private void Awake()
         {
             if (_singletonInstance != null)
             {
-                Destroy(gameObject);
+                _singletonInstance._listening = true;
+                Destroy(this.gameObject);
                 return;
             }
 
@@ -46,7 +54,7 @@ namespace LoggedInScene
 
         private async void Start()
         {
-            while (enabled)
+            while (_listening)
                 await WaitForCommandAndExecuteIt();
         }
 
@@ -70,6 +78,8 @@ namespace LoggedInScene
                 //11 => new PawnMovesInCommand(), <-- SERVER
                 12 => new MatchRoundUpdateInCommand(_boardControllerInstance), 
                 13 => new MatchEndInCommand(_matchLogicInstance),
+                //14 => new LogoutRequestInCommand(this), <-- SERVER
+                15 => new LogoutInCommand(this),
                 _ => null
             };
 
