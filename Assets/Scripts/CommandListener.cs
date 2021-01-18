@@ -80,6 +80,7 @@ namespace LoggedInScene
                 13 => new MatchEndInCommand(_matchLogicInstance),
                 //14 => new LogoutRequestInCommand(this), <-- SERVER
                 15 => new LogoutInCommand(this),
+                //16 => new CancelCompetitiveRequestInCommand(PlayerData), <-- SERVER
                 _ => null
             };
 
