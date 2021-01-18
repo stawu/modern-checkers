@@ -10,6 +10,8 @@ namespace Match
         public UnityEvent onFirstPlayerTurnSelected;
         public UnityEvent onPlayerIsFirstTurn;
         public UnityEvent onPlayerOpponentIsFirstTurn;
+        public UnityEvent onYourTurn;
+        public UnityEvent onOpponentTurn;
         public UnityEvent onMatchWon;
         public UnityEvent onMatchLost;
         

@@ -11,6 +11,7 @@ namespace Network.Packets.In.Commands
     {
         private readonly BoardController _boardControllerInstance;
         private MatchController _matchControllerInstance;
+        private MatchLogic _matchLogicInstance;
         
         private int _pawnStartPosX, _pawnStartPosY;
 
@@ -19,9 +20,10 @@ namespace Network.Packets.In.Commands
         private int[] _movesEnemyTilePosX, _movesEnemyTilePosY;
         private bool _playerTurnChanged;
 
-        public MatchRoundUpdateInCommand(BoardController boardControllerInstance)
+        public MatchRoundUpdateInCommand(MatchLogic matchLogicInstance, BoardController boardControllerInstance)
         {
             _boardControllerInstance = boardControllerInstance;
+            _matchLogicInstance = matchLogicInstance;
             _matchControllerInstance = _boardControllerInstance.matchControllerInstance;
         }
 
@@ -86,7 +88,14 @@ namespace Network.Packets.In.Commands
             pawnTile.RemovePawn();
 
             if (_playerTurnChanged)
+            {
                 _matchControllerInstance._playerTurn = !_matchControllerInstance._playerTurn;
+                
+                if(_matchControllerInstance._playerTurn)
+                    _matchLogicInstance.onYourTurn.Invoke();
+                else
+                    _matchLogicInstance.onOpponentTurn.Invoke();
+            }
         }
     }
 }
