@@ -6,14 +6,14 @@ namespace Network.Packets.In.Commands
 {
     public class MatchRoundStartInCommand : InCommand
     {
-        //private MatchLogic _matchLogicInstance;
+        private MatchLogic _matchLogicInstance;
         private BoardController _boardControllerInstance;
         private bool _playerTurn;
 
-        public MatchRoundStartInCommand(BoardController boardControllerInstance)
+        public MatchRoundStartInCommand(MatchLogic matchLogicInstance, BoardController boardControllerInstance)
         {
             Debug.Log("MatchRoundStartInCommand");
-            //_matchLogicInstance = matchLogicInstance;
+            _matchLogicInstance = matchLogicInstance;
             _boardControllerInstance = boardControllerInstance;
         }
 
@@ -25,7 +25,12 @@ namespace Network.Packets.In.Commands
         public override void Execute()
         {
             _boardControllerInstance.ResetPawns(_playerTurn);
-            //_matchLogicInstance.onFirstPlayerTurnSelected.Invoke();
+            _matchLogicInstance.onFirstPlayerTurnSelected.Invoke();
+            
+            if(_playerTurn)
+                _matchLogicInstance.onPlayerIsFirstTurn.Invoke();
+            else
+                _matchLogicInstance.onPlayerOpponentIsFirstTurn.Invoke();
         }
     }
 }

@@ -74,7 +74,7 @@ namespace LoggedInScene
                 6 => new StartMatchInCommand(_playLogicInstance),
                 7 => new MatchRejectedInCommand(_playLogicInstance),
                 9 => new OpponentPlayerDataInCommand(_boardControllerInstance, _matchLogicInstance),
-                10 => new MatchRoundStartInCommand(_boardControllerInstance),
+                10 => new MatchRoundStartInCommand(_matchLogicInstance, _boardControllerInstance),
                 //11 => new PawnMovesInCommand(), <-- SERVER
                 12 => new MatchRoundUpdateInCommand(_boardControllerInstance), 
                 13 => new MatchEndInCommand(_matchLogicInstance),
