@@ -48,6 +48,12 @@ namespace Match
 
         private void Update()
         {
+            //todo
+            if (king && !playerPawn)
+                _material.SetColor(_outlineColorShaderPropertyId, new Color(0.7f, 0.37f, 0.1f));
+            else if(king)
+                _material.SetColor(_outlineColorShaderPropertyId, Color.yellow);
+            
             if (_isMoving)
             {
                 UpdateMovePosition();
