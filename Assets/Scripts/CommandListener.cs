@@ -81,6 +81,8 @@ namespace LoggedInScene
                 //14 => new LogoutRequestInCommand(this), <-- SERVER
                 15 => new LogoutInCommand(this),
                 //16 => new CancelCompetitiveRequestInCommand(PlayerData), <-- SERVER
+                //17 => new ClaimDailyRewardInCommand(this, PlayerData), <-- SERVER
+                //18 => new SurrenderRequestInCommand(), <-- SERVER
                 _ => null
             };
 
