@@ -1,5 +1,6 @@
 using System.Linq;
 using Skins;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,7 @@ namespace LoggedInScene.Shop
         [SerializeField] private RectTransform parentToSkinPanels;
         [SerializeField] private BuyLogic buyLogicInstance;
         [SerializeField] private SelectingSkinsForPawnsPanelGenerator selectingSkinsForPawnsPanelGeneratorInstance;
+        [SerializeField] private TextMeshProUGUI coinsText;
         
         private Image[] _skinPanelImages;
         private Text[] _skinPanelNameTexts;
@@ -40,6 +42,8 @@ namespace LoggedInScene.Shop
                 _skinPanelUnlockButtons[i].gameObject.SetActive(!skinOwned);
                 _skinPanelSelectButtons[i].gameObject.SetActive(skinOwned);
             }
+
+            coinsText.text = PlayerDataManager.Coins.ToString();
         }
         
         private void Awake()
