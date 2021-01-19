@@ -83,11 +83,11 @@ namespace Match
                     
                     _selectedPawn = pawnOnTile;
                     _selectedPawnMoves = CalculatePossiblePawnMoves(_selectedPawn, tile);
-                    bool pawnHavePossibleAttack = _selectedPawnMoves.Any(move => move.MoveType == MoveType.Attack);
+                    bool playerHavePossibleAttack = PlayerHavePossibleAttack();
 
                     foreach (var move in _selectedPawnMoves)
                     {
-                        if (pawnHavePossibleAttack && move.MoveType == MoveType.Move)
+                        if (playerHavePossibleAttack && move.MoveType == MoveType.Move)
                         {
                             move.Tile.SetTileColor(Color.black);
                             move.Forbidden = true;
@@ -131,6 +131,27 @@ namespace Match
                 pawn.ChangeOutlineToDefault();
         }
 
+        private bool PlayerHavePossibleAttack()
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                for (int y = 0; y < 8; y++)
+                {
+                    if (!boardControllerInstance.TryGetTile(new Vector2Int(x, y), out var tile)) 
+                        continue;
+                    if (!tile.TryGetPawn(out var pawn)) 
+                        continue;
+                    if(!pawn.playerPawn)
+                        continue;
+
+                    PawnMove[] possiblePawnMoves = CalculatePossiblePawnMoves(pawn, tile);
+                    if (possiblePawnMoves.Any(move => move.MoveType == MoveType.Attack))
+                        return true;
+                }
+            }
+
+            return false;
+        }
 
 
         private PawnMove[] CalculatePossiblePawnMoves(Pawn pawn, Tile pawnTile)
@@ -138,15 +159,15 @@ namespace Match
             var moves = new List<PawnMove>();
             Vector3[] directions =
             {
-                _selectedPawn.transform.forward + _selectedPawn.transform.right,
-                _selectedPawn.transform.forward - _selectedPawn.transform.right,
-                -_selectedPawn.transform.forward + _selectedPawn.transform.right,
-                -_selectedPawn.transform.forward - _selectedPawn.transform.right
+                pawn.forwardLook + Vector3.right,
+                pawn.forwardLook + Vector3.left,
+                -pawn.forwardLook + Vector3.right,
+                -pawn.forwardLook + Vector3.left,
             };
 
             foreach (var direction in directions)
             {
-                for (var directionSum = direction; boardControllerInstance.TryGetTile(_selectedPawn.transform.position + directionSum, out var tile); directionSum += direction)
+                for (var directionSum = direction; boardControllerInstance.TryGetTile(pawnTile.Transform.position + directionSum, out var tile); directionSum += direction)
                 {
                     if (tile.TryGetPawn(out var pawnAtTargetTile))
                     {
@@ -154,13 +175,13 @@ namespace Match
                             break;
                         else
                         {
-                            CalculatePossibleAttackMovesAndAddThemTo(moves, _selectedPawn.transform.position + directionSum + direction, tile, pawnTile, -1);
+                            CalculatePossibleAttackMovesAndAddThemTo(moves, pawnTile.Transform.position + directionSum + direction, tile, pawnTile, -1);
                             break;
                         }
                     }
                     else
                     {
-                        if(pawn.king == false && Vector3.Dot(direction, _selectedPawn.transform.forward) < 0)
+                        if(pawn.king == false && Vector3.Dot(direction, pawn.forwardLook) < 0)
                             break;
                         
                         var move = new PawnMove(tile, MoveType.Move);
